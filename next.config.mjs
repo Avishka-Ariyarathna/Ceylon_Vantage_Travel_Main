@@ -1,14 +1,4 @@
-import type { NextConfig } from "next";
-
-// Security headers applied to every response. Keeps the site hardened
-// against common client-side attacks (clickjacking, MIME sniffing,
-// referrer leakage) without touching how any page is built.
-//
-// One nuance: Next.js's DEV-mode tooling (Fast Refresh / error overlay)
-// needs eval() to work in the browser, but the production build never
-// uses eval() at all. So 'unsafe-eval' is only added to the script-src
-// rule when running `next dev` -- the deployed/production CSP stays
-// fully locked down.
+/** @type {import('next').NextConfig} */
 const isDev = process.env.NODE_ENV !== "production";
 
 const securityHeaders = [
@@ -40,7 +30,7 @@ const securityHeaders = [
   },
 ];
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   async headers() {
     return [
       {

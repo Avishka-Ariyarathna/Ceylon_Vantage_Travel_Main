@@ -30,15 +30,22 @@ export default function InquiryForm() {
     const data = Object.fromEntries(new FormData(form).entries());
 
     try {
+      console.log("Submitting inquiry form:", data);
       const res = await fetch("/api/inquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error("Request failed");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        console.error("Form submission failed:", res.status, errorData);
+        throw new Error(errorData?.error || "Request failed");
+      }
+      console.log("Inquiry submitted successfully!");
       setStatus("success");
       form.reset();
-    } catch {
+    } catch (err) {
+      console.error("Error submitting form:", err);
       setStatus("error");
     }
   }
@@ -60,13 +67,19 @@ export default function InquiryForm() {
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-6 sm:grid-cols-2">
-      {/* Honeypot -- invisible to real visitors and skipped by screen
-          readers, but simple bots that auto-fill every input tend to
-          fill this in too. Server rejects silently if it's non-empty. */}
-      <label className="absolute -left-[9999px] h-0 w-0 overflow-hidden opacity-0" aria-hidden="true">
-        Company
-        <input type="text" name="company" tabIndex={-1} autoComplete="off" />
-      </label>
+      {/* Honeypot -- hidden from real visitors and browser autofill,
+          used to catch automated spam bots. */}
+      <div style={{ display: "none" }} aria-hidden="true">
+        <label htmlFor="_bot_check">Do not fill</label>
+        <input
+          id="_bot_check"
+          type="text"
+          name="_bot_check"
+          tabIndex={-1}
+          autoComplete="off"
+          defaultValue=""
+        />
+      </div>
 
       <Field label="Full name" name="name" required />
       <Field label="Email" name="email" type="email" required />

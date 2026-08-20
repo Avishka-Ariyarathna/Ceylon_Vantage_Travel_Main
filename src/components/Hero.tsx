@@ -1,6 +1,6 @@
 import RidgeLine from "./RidgeLine";
 import ImageSlideshow from "./ImageSlideshow";
-import SocialDock from "./SocialDock";
+import SocialDock, { MobileContactRow } from "./SocialDock";
 
 const HERO_IMAGES = [
   "/images/hero/hero.jpg",
@@ -91,6 +91,8 @@ export default function Hero() {
             </li>
           ))}
         </ul>
+
+        <MobileContactRow />
       </div>
     </section>
   );

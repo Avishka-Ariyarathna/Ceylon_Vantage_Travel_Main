@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
 
   if (isRateLimited(ip)) {
+    console.warn(`⚠️ [API /api/inquiries] Rate limit hit for IP: ${ip}`);
     return NextResponse.json(
       { error: "Too many requests. Please try again in a few minutes." },
       { status: 429 }
@@ -53,13 +54,15 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
+    console.warn(`⚠️ [API /api/inquiries] Malformed JSON payload received from IP: ${ip}`);
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
   // Honeypot: a field that's invisible to real visitors (see InquiryForm)
   // but that simple bots tend to fill in automatically. If it has any
   // value, silently pretend success rather than tipping the bot off.
-  if (typeof body.company === "string" && body.company.trim() !== "") {
+  if (typeof body._bot_check === "string" && body._bot_check.trim() !== "") {
+    console.warn(`🤖 [API /api/inquiries] Honeypot triggered (_bot_check: "${body._bot_check}"). Skipping email.`);
     return NextResponse.json({ ok: true }, { status: 201 });
   }
 
@@ -67,6 +70,7 @@ export async function POST(req: NextRequest) {
   const missing = required.filter((field) => !body[field]);
 
   if (missing.length > 0) {
+    console.warn(`⚠️ [API /api/inquiries] Missing required fields: ${missing.join(", ")}`);
     return NextResponse.json(
       { error: `Missing required fields: ${missing.join(", ")}` },
       { status: 400 }
@@ -76,16 +80,19 @@ export async function POST(req: NextRequest) {
   // Basic email sanity check
   const email = String(body.email);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    console.warn(`⚠️ [API /api/inquiries] Invalid email format: "${email}"`);
     return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
   }
 
   // Enforce length caps and strip the honeypot field before it's ever
   // logged, emailed, or stored.
+  delete body._bot_check;
   delete body.company;
   for (const [key, value] of Object.entries(body)) {
     if (typeof value !== "string") continue;
     const max = MAX_FIELD_LENGTH[key] ?? 300;
     if (value.length > max) {
+      console.warn(`⚠️ [API /api/inquiries] Field "${key}" exceeds max length (${value.length}/${max})`);
       return NextResponse.json(
         { error: `${key} is too long.` },
         { status: 400 }
@@ -93,13 +100,15 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  console.log(`📨 [API /api/inquiries] New inquiry submitted by: ${body.name} <${body.email}> (WhatsApp: ${body.whatsapp})`);
+
   // Email is the primary delivery path -- this is what actually gets read.
   // If it's not configured correctly, fail loudly so the site owner
   // notices during setup rather than silently losing inquiries.
   try {
     await sendInquiryEmail(body);
   } catch (err) {
-    console.error("Failed to email inquiry:", err);
+    console.error("❌ [API /api/inquiries] Failed to send email via SMTP:", err);
     return NextResponse.json(
       {
         error:

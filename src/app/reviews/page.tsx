@@ -3,9 +3,11 @@ import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import TripAdvisorWidget from "@/components/TripAdvisorWidget";
-import { GoogleMark, TripAdvisorMark } from "@/components/BrandLogos";
+import FacebookPagePlugin from "@/components/FacebookPagePlugin";
+import InstagramFollowCard from "@/components/InstagramFollowCard";
+import GoogleReviewsCarousel from "@/components/GoogleReviewsCarousel";
+import { TripAdvisorMark } from "@/components/BrandLogos";
 import { whatsappLink } from "@/lib/whatsapp";
-import { siteInfo } from "@/lib/siteInfo";
 
 export const metadata: Metadata = {
   title: "Reviews — Ceylon Vantage",
@@ -14,13 +16,22 @@ export const metadata: Metadata = {
 };
 
 /**
- * TripAdvisor is live -- see TripAdvisorWidget.tsx for the embed.
- * Google Reviews is still a placeholder panel below until that listing
- * exists and has reviews. SWAP-IN INSTRUCTIONS for Google, once verified:
- *  - There's no official free embed that shows review text. Cheapest
- *    real options are a small embed tool (Elfsight/EmbedSocial) pointed
- *    at your Business Profile, or linking the badge below straight to
- *    your public Google review page once you have a g.page/r/... link.
+ * Google: GoogleReviewsCarousel fetches live review text from our own
+ * /api/google-reviews route once GOOGLE_PLACES_API_KEY and
+ * GOOGLE_PLACE_ID are set (see .env.example) -- falls back to a plain
+ * link-out card until then, so nothing looks broken in the meantime.
+ * Given the full-width showcase treatment here since it's the richest
+ * content (actual review text) -- TripAdvisor and social links are
+ * secondary supporting cards below it.
+ *
+ * TripAdvisor: the free, official self-serve widget (TripAdvisorWidget)
+ * shows a live rating/link, but not review text. TripAdvisor does now
+ * offer review text (up to ~5 reviews + photos per location) through
+ * their Content API self-serve tier at tripadvisor.com/business/insights/content-api
+ * -- but as of checking, that tier is paid ("pay monthly, cancel
+ * anytime"), unlike Google's free-tier Places API used above. Worth
+ * doing if you want full parity with the Google showcase; wire it in
+ * the same way as GoogleReviewsCarousel once you have a key.
  */
 export default function ReviewsPage() {
   return (
@@ -41,60 +52,21 @@ export default function ReviewsPage() {
         </div>
       </section>
 
-      <section className="bg-soft-white px-6 py-20">
+      {/* Google Reviews -- full-width showcase, wider container than the
+          rest of the page so a multi-column grid of reviews has room to
+          breathe rather than being squeezed into a half-width card. */}
+      <section className="bg-soft-white px-6 pb-4 pt-20">
+        <div className="mx-auto max-w-6xl">
+          <Reveal>
+            <GoogleReviewsCarousel />
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="bg-soft-white px-6 py-16">
         <div className="mx-auto max-w-4xl">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <Reveal>
-              <div className="card-pop flex h-full flex-col bg-warm-stone p-8">
-                <div className="flex items-center gap-3">
-                  <GoogleMark className="h-9 w-9" />
-                  <div>
-                    <p className="font-display text-lg text-ink-teal">
-                      Google Reviews
-                    </p>
-                    <p className="font-body text-xs uppercase tracking-wide text-ink-charcoal-soft/60">
-                      Business Profile
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-5 flex-1 font-body text-sm leading-relaxed text-ink-charcoal-soft">
-                  Our Google Business Profile is being verified. Once it
-                  goes live, ratings and reviews will appear here
-                  automatically — the same panel, not a redesign.
-                </p>
-                <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-full border hairline px-3 py-1 font-body text-xs text-ink-charcoal-soft">
-                  <span className="h-1.5 w-1.5 rounded-full bg-vantage-gold" />
-                  Listing in progress
-                </span>
-              </div>
-            </Reveal>
-
-            <Reveal delayMs={100}>
-              <div className="card-pop flex h-full flex-col bg-warm-stone p-8">
-                <div className="flex items-center gap-3">
-                  <TripAdvisorMark className="h-9 w-9" />
-                  <div>
-                    <p className="font-display text-lg text-ink-teal">
-                      TripAdvisor
-                    </p>
-                    <p className="font-body text-xs uppercase tracking-wide text-ink-charcoal-soft/60">
-                      Live rating
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-5 font-body text-sm leading-relaxed text-ink-charcoal-soft">
-                  Pulled directly from our TripAdvisor listing — this
-                  updates automatically as new reviews come in.
-                </p>
-                <div className="mt-5">
-                  <TripAdvisorWidget />
-                </div>
-              </div>
-            </Reveal>
-          </div>
-
-          <Reveal delayMs={200}>
-            <div className="mx-auto mt-6 rounded-2xl border hairline bg-ink-teal px-6 py-8 text-center text-soft-white sm:px-10">
+          <Reveal delayMs={100}>
+            <div className="mx-auto rounded-2xl border hairline bg-ink-teal px-6 py-8 text-center text-soft-white sm:px-10">
               <p className="font-display text-xl">
                 Want to hear from a recent traveler directly?
               </p>
@@ -116,19 +88,43 @@ export default function ReviewsPage() {
             </div>
           </Reveal>
 
-          <Reveal delayMs={280}>
-            <p className="mt-8 text-center font-body text-xs text-ink-charcoal-soft/60">
-              Prefer Instagram? See recent trips and behind-the-scenes at{" "}
-              <a
-                href={siteInfo.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-ink-teal underline decoration-vantage-gold/50 underline-offset-2 hover:text-vantage-gold"
-              >
-                {siteInfo.social.instagramHandle}
-              </a>
-              .
-            </p>
+          <Reveal delayMs={200}>
+            <div className="mt-16">
+              <p className="eyebrow mb-3 text-center">MORE PLACES TO FIND US</p>
+              <h2 className="text-center font-display text-2xl text-ink-teal sm:text-3xl">
+                Ratings, updates, and behind-the-scenes
+              </h2>
+              <p className="mx-auto mt-3 max-w-md text-center font-body text-sm text-ink-charcoal-soft">
+                Every channel we&apos;re actually active on, live and
+                straight from the source.
+              </p>
+
+              <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="card-pop flex h-full flex-col bg-warm-stone p-8">
+                  <div className="flex items-center gap-3">
+                    <TripAdvisorMark className="h-9 w-9" />
+                    <div>
+                      <p className="font-display text-lg text-ink-teal">
+                        TripAdvisor
+                      </p>
+                      <p className="font-body text-xs uppercase tracking-wide text-ink-charcoal-soft/60">
+                        Live rating
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-5 font-body text-sm leading-relaxed text-ink-charcoal-soft">
+                    Pulled directly from our TripAdvisor listing — this
+                    updates automatically as new reviews come in.
+                  </p>
+                  <div className="mt-5">
+                    <TripAdvisorWidget />
+                  </div>
+                </div>
+
+                <FacebookPagePlugin />
+                <InstagramFollowCard />
+              </div>
+            </div>
           </Reveal>
         </div>
       </section>

@@ -2,6 +2,7 @@ import NavBar from "@/components/NavBar";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import VantagePoints from "@/components/VantagePoints";
+import TrustBadges from "@/components/TrustBadges";
 import Destinations from "@/components/Destinations";
 import TourPackages from "@/components/TourPackages";
 import Experiences from "@/components/Experiences";
@@ -22,6 +23,9 @@ export default function Home() {
       </Reveal>
       <Reveal>
         <VantagePoints />
+      </Reveal>
+      <Reveal>
+        <TrustBadges />
       </Reveal>
       <Reveal>
         <Destinations />

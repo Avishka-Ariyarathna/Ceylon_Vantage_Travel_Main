@@ -56,14 +56,14 @@ export default function RootLayout({
     },
     sameAs: [
       "https://www.instagram.com/ceylon_vantage/",
-      "https://www.facebook.com/share/19HtDb8pSR/",
+      "https://web.facebook.com/profile.php?id=61592832817349",
       "https://www.tripadvisor.com/Attraction_Review-g665217-d34554874-Reviews-Ceylon_Vantage-Sri_Jayawardenepura_Western_Province.html",
     ],
     areaServed: "Sri Lanka",
   };
 
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -77,7 +77,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
       </head>
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning>
         {children}
         <WhatsAppButton />
       </body>

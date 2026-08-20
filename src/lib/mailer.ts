@@ -105,12 +105,18 @@ export async function sendInquiryEmail(data: Record<string, unknown>) {
   const nameForSubject =
     typeof data.name === "string" && data.name.trim() ? data.name.trim() : "a traveler";
 
-  await transporter.sendMail({
+  const recipient = EMAIL_TO || EMAIL_USER || siteInfo.email;
+  console.log(`📧 [Mailer] Sending inquiry email to: ${recipient} (From: ${EMAIL_USER})`);
+
+  const info = await transporter.sendMail({
     from: `"Ceylon Vantage Website" <${EMAIL_USER}>`,
-    to: EMAIL_TO || EMAIL_USER || siteInfo.email,
+    to: recipient,
     replyTo: typeof data.email === "string" ? data.email : undefined,
     subject: `New trip inquiry from ${nameForSubject}`,
     text: formatInquiryAsText(data),
     html: formatInquiryAsHtml(data),
   });
+
+  console.log(`✅ [Mailer] Email dispatched successfully! Message ID: ${info.messageId} | Recipient: ${recipient}`);
+  return info;
 }

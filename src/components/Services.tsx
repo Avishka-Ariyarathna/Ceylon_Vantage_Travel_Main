@@ -43,6 +43,63 @@ const SERVICES = [
   },
 ];
 
+const MORE_CAPABILITIES = [
+  {
+    title: "Expert Tour Guides",
+    body: "Deep, native knowledge of Sri Lankan culture, history, and hidden gems.",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="9" cy="8" r="3" />
+        <path d="M3.5 19c.6-3 3-5 5.5-5s4.9 2 5.5 5" />
+        <circle cx="17.5" cy="8.5" r="2.2" />
+        <path d="M15.5 13.3c1.9.4 3.3 2 3.8 4.2" />
+      </svg>
+    ),
+  },
+  {
+    title: "Destination Selection",
+    body: "Honest advice on where to go based on season, interests, and time.",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9" />
+        <path d="m15.2 8.8-2 4.4-4.4 2 2-4.4 4.4-2Z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Accommodation Booking",
+    body: "From luxury resorts to boutique stays, matched to your budget.",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3.5 20V7a1 1 0 0 1 1-1H12a1 1 0 0 1 1 1v13" />
+        <path d="M13 11h6.5a1 1 0 0 1 1 1v8" />
+        <path d="M3.5 20h17" />
+        <path d="M6.5 9.5h2M6.5 13h2M6.5 16.5h2" />
+      </svg>
+    ),
+  },
+  {
+    title: "Photography Tours",
+    body: "Guided visits timed for the light, at the island's most photogenic spots.",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1-2h7l1 2h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5v-9Z" />
+        <circle cx="12" cy="12.5" r="3.3" />
+      </svg>
+    ),
+  },
+  {
+    title: "Travel Insurance",
+    body: "Facilitation for comprehensive coverage, so you can travel with peace of mind.",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3.5 5 6v6c0 4.5 3 7.7 7 8.5 4-.8 7-4 7-8.5V6l-7-2.5Z" />
+        <path d="m9.5 12 1.8 1.8L15 10" />
+      </svg>
+    ),
+  },
+];
+
 export default function Services() {
   return (
     <section className="bg-warm-stone px-6 py-24">
@@ -89,6 +146,34 @@ export default function Services() {
                   {s.ctaLabel}
                 </Link>
               )}
+            </div>
+          ))}
+        </div>
+
+        {/* Additional capabilities that don't need their own photo card --
+            confirmed real services (accommodation, photography tours, and
+            travel insurance facilitation were confirmed by the business
+            owner directly before this was written). */}
+        <p className="mt-16 font-body text-sm font-medium uppercase tracking-wide text-ink-charcoal-soft/60">
+          ...and everything else covered too
+        </p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {MORE_CAPABILITIES.map((c) => (
+            <div
+              key={c.title}
+              className="flex items-start gap-3 rounded-xl border hairline bg-soft-white/60 p-5"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink-teal/10 text-ink-teal">
+                {c.icon}
+              </span>
+              <div>
+                <p className="font-display text-base text-ink-teal">
+                  {c.title}
+                </p>
+                <p className="mt-1 font-body text-sm text-ink-charcoal-soft">
+                  {c.body}
+                </p>
+              </div>
             </div>
           ))}
         </div>

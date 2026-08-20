@@ -92,49 +92,56 @@ const ITEMS: DockItem[] = [
 ];
 
 /**
- * Floating "liquid glass" contact rail shown over the Hero wallpaper.
- * Sits vertically along the right edge on larger screens and collapses
- * to a horizontal row above the fold on small screens. Each pill is
- * transparent/frosted so the hero photo shows through, and slides open
- * to reveal its label on hover (desktop) or tap (touch devices).
+ * Floating "liquid glass" contact rail shown over the Hero wallpaper on
+ * larger screens. Sits vertically along the right edge, and each pill
+ * slides open to reveal its label on hover.
+ *
+ * The mobile equivalent is the separate MobileContactRow export below —
+ * it deliberately does NOT live here as an absolutely-positioned overlay,
+ * because a fixed pixel offset can't reliably clear the hero's heading/
+ * button/checklist stack across every phone width and every line-wrap
+ * (that was the cause of the icons overlapping the CTA button). Instead
+ * MobileContactRow is placed directly in the normal content flow in
+ * Hero.tsx, right after the checklist, so it simply pushes below
+ * whatever comes before it and can never overlap anything.
  */
 export default function SocialDock() {
   return (
-    <>
-      {/* Desktop / tablet -- vertical rail along the right edge, pills
-          slide open to reveal a label on hover. */}
-      <div
-        className="pointer-events-none absolute inset-y-0 right-4 z-20 hidden items-center sm:right-6 md:flex"
-        aria-label="Quick contact links"
-      >
-        <div className="pointer-events-auto flex w-40 flex-col items-end gap-3">
-          {ITEMS.map((item, i) => (
-            <DockPill key={item.label} item={item} delay={i * 90} />
-          ))}
-        </div>
+    <div
+      className="pointer-events-none absolute inset-y-0 right-4 z-20 hidden items-center sm:right-6 md:flex"
+      aria-label="Quick contact links"
+    >
+      <div className="pointer-events-auto flex w-40 flex-col items-end gap-3">
+        {ITEMS.map((item, i) => (
+          <DockPill key={item.label} item={item} delay={i * 90} />
+        ))}
       </div>
+    </div>
+  );
+}
 
-      {/* Mobile -- compact horizontal glass row, always visible, sitting
-          just above the ridge lines so every channel is one tap away
-          without needing hover. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-[9.5rem] z-20 flex justify-center px-6 md:hidden">
-        <div className="liquid-glass pointer-events-auto flex items-center gap-1 rounded-full p-1.5">
-          {ITEMS.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={item.label}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-soft-white transition active:scale-90"
-              style={{ color: item.color }}
-            >
-              {item.icon}
-            </a>
-          ))}
-        </div>
-      </div>
-    </>
+/**
+ * Compact horizontal glass row of the same contact links, for phones.
+ * Rendered in-flow (not absolutely positioned) so it can't drift over
+ * other hero content -- see the note above.
+ */
+export function MobileContactRow() {
+  return (
+    <div className="liquid-glass mt-6 flex w-fit items-center gap-1 rounded-full p-1.5 md:hidden">
+      {ITEMS.map((item) => (
+        <a
+          key={item.label}
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={item.label}
+          className="flex h-9 w-9 items-center justify-center rounded-full text-soft-white transition active:scale-90"
+          style={{ color: item.color }}
+        >
+          {item.icon}
+        </a>
+      ))}
+    </div>
   );
 }
 

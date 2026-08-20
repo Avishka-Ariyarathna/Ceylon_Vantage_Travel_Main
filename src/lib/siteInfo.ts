@@ -16,7 +16,8 @@ export const siteInfo = {
   social: {
     instagram: "https://www.instagram.com/ceylon_vantage/",
     instagramHandle: "@ceylon_vantage",
-    facebook: "https://www.facebook.com/share/19HtDb8pSR/",
+    facebook: "https://web.facebook.com/profile.php?id=61592832817349",
+    googleReviewUrl: "https://g.page/r/CbSbOUKriJezEBM/review",
     tripadvisor:
       "https://www.tripadvisor.com/Attraction_Review-g665217-d34554874-Reviews-Ceylon_Vantage-Sri_Jayawardenepura_Western_Province.html",
   },

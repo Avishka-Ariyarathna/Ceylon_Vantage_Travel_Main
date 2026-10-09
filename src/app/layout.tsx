@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import "./globals.css";
 
@@ -80,6 +81,7 @@ export default function RootLayout({
       <body className="antialiased" suppressHydrationWarning>
         {children}
         <WhatsAppButton />
+        <Analytics />
       </body>
     </html>
   );
